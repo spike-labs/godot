@@ -50,6 +50,9 @@ Node *EditorSceneFormatImporterGLTF::import_scene(const String &p_path, uint32_t
 	doc.instantiate();
 	Ref<GLTFState> state;
 	state.instantiate();
+	if (p_options.has("textures/compression")) {
+		state->set_textures_compression(p_options["textures/compression"]);
+	}
 	Error err = doc->append_from_file(p_path, state, p_flags);
 	if (err != OK) {
 		if (r_err) {

@@ -55,7 +55,7 @@ public:
 		MSG_TYPE_EDITOR,
 	};
 
-private:
+protected:
 	struct LogMessage {
 		String text;
 		MessageType type;
@@ -81,7 +81,7 @@ private:
 
 	// Encapsulates all data and functionality regarding filters.
 	struct LogFilter {
-	private:
+	protected:
 		// Force usage of set method since it has functionality built-in.
 		int message_count = 0;
 		bool active = true;
@@ -126,6 +126,7 @@ private:
 		}
 	};
 
+	protected:
 	Vector<LogMessage> messages;
 	// Maps MessageTypes to LogFilters for convenient access and storage (don't need 1 member per filter).
 	HashMap<MessageType, LogFilter *> type_filter_map;
@@ -160,7 +161,7 @@ private:
 	static void _undo_redo_cbk(void *p_self, const String &p_name);
 
 	void _rebuild_log();
-	void _add_log_line(LogMessage &p_message, bool p_replace_previous = false);
+	virtual void _add_log_line(LogMessage &p_message, bool p_replace_previous = false);
 
 	void _set_filter_active(bool p_active, MessageType p_message_type);
 	void _set_search_visible(bool p_visible);

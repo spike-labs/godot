@@ -103,6 +103,10 @@
 
 #include "modules/modules_enabled.gen.h" // For mono.
 
+#ifdef TOOLS_ENABLED
+void luascript_save_emmylua_doc(DocTools &doc, String &path);
+#endif
+extern String get_version_build();
 /* Static members */
 
 // Singletons
@@ -234,7 +238,7 @@ static String get_full_version_string() {
 	if (!hash.is_empty()) {
 		hash = "." + hash.left(9);
 	}
-	return String(VERSION_FULL_BUILD) + hash;
+	return get_version_build() + hash;
 }
 
 // FIXME: Could maybe be moved to have less code in main.cpp.
@@ -458,7 +462,7 @@ Error Main::test_setup() {
 
 	register_core_settings(); // Here globals are present.
 
-	translation_server = memnew(TranslationServer);
+	translation_server = objnew(TranslationServer);
 	tsman = memnew(TextServerManager);
 
 	if (tsman) {
@@ -672,7 +676,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 	register_core_settings(); //here globals are present
 
-	translation_server = memnew(TranslationServer);
+	translation_server = objnew(TranslationServer);
 	performance = memnew(Performance);
 	GDREGISTER_CLASS(Performance);
 	engine->add_singleton(Engine::Singleton("Performance", performance));
@@ -1425,7 +1429,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	// This also prevents logs from being created for the editor instance, as feature tags
 	// are disabled while in the editor (even if they should logically apply).
 	GLOBAL_DEF("debug/file_logging/enable_file_logging.pc", true);
-	GLOBAL_DEF("debug/file_logging/log_path", "user://logs/godot.log");
+	GLOBAL_DEF("debug/file_logging/log_path", "user://logs/" VERSION_SHORT_NAME ".log");
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "debug/file_logging/max_log_files", PROPERTY_HINT_RANGE, "0,20,1,or_greater"), 5);
 
 	if (!project_manager && !editor && FileAccess::get_create_func(FileAccess::ACCESS_USERDATA) &&
@@ -2529,6 +2533,7 @@ bool Main::start() {
 		print_line("Generating new docs...");
 		err = doc.save_classes(index_path, doc_data_classes);
 		ERR_FAIL_COND_V_MSG(err != OK, false, "Error saving new docs:" + itos(err));
+		luascript_save_emmylua_doc(doc, doc_tool_path);
 
 		OS::get_singleton()->set_exit_code(EXIT_SUCCESS);
 		return false;
@@ -2756,7 +2761,7 @@ bool Main::start() {
 		EditorNode *editor_node = nullptr;
 		if (editor) {
 			Engine::get_singleton()->startup_benchmark_begin_measure("editor");
-			editor_node = memnew(EditorNode);
+			editor_node = objnew(EditorNode);
 			sml->get_root()->add_child(editor_node);
 
 			if (!_export_preset.is_empty()) {
@@ -2955,7 +2960,7 @@ bool Main::start() {
 		if (project_manager) {
 			Engine::get_singleton()->startup_benchmark_begin_measure("project_manager");
 			Engine::get_singleton()->set_editor_hint(true);
-			ProjectManager *pmanager = memnew(ProjectManager);
+			ProjectManager *pmanager = objnew(ProjectManager);
 			ProgressDialog *progress_dialog = memnew(ProgressDialog);
 			pmanager->add_child(progress_dialog);
 			sml->get_root()->add_child(pmanager);

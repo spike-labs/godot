@@ -564,6 +564,7 @@ float DisplayServerIOS::screen_get_max_scale() const {
 
 void DisplayServerIOS::screen_set_orientation(DisplayServer::ScreenOrientation p_orientation, int p_screen) {
 	screen_orientation = p_orientation;
+	[AppDelegate orientInterface:p_orientation];
 }
 
 DisplayServer::ScreenOrientation DisplayServerIOS::screen_get_orientation(int p_screen) const {

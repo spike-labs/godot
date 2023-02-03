@@ -150,7 +150,7 @@ public:
 		SafeFlag done;
 	};
 
-private:
+protected:
 	enum MenuOptions {
 		FILE_NEW_SCENE,
 		FILE_NEW_INHERITED_SCENE,

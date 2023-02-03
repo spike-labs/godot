@@ -58,6 +58,7 @@ class GLTFState : public Resource {
 	bool use_khr_texture_transform = false;
 	bool discard_meshes_and_materials = false;
 	bool create_animations = true;
+	int textures_compression = 0;
 
 	Vector<Ref<GLTFNode>> nodes;
 	Vector<Vector<uint8_t>> buffers;
@@ -189,6 +190,10 @@ public:
 
 	Variant get_additional_data(const StringName &p_extension_name);
 	void set_additional_data(const StringName &p_extension_name, Variant p_additional_data);
+
+	void set_textures_compression(int value) {
+		this->textures_compression = value;
+	}
 };
 
 #endif // GLTF_STATE_H

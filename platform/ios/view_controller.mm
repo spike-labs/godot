@@ -51,6 +51,15 @@
 
 @implementation ViewController
 
+static GodotView *_godot_view;
+
+- (id)init
+{
+    if ((self = [super init]))
+        self.modalPresentationStyle = UIModalPresentationFullScreen;
+    return self;
+}
+
 - (GodotView *)godotView {
 	return (GodotView *)self.view;
 }
@@ -114,6 +123,11 @@
 }
 
 - (void)loadView {
+	if (_godot_view) {
+		self.view = [[UIView alloc] init];
+		return;
+	}
+
 	GodotView *view = [[GodotView alloc] init];
 	GodotViewRenderer *renderer = [[GodotViewRenderer alloc] init];
 
@@ -122,6 +136,8 @@
 
 	view.renderer = self.renderer;
 	view.delegate = self;
+
+	_godot_view = view;
 }
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -155,6 +171,8 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
+
+	if (self.view != _godot_view) return;
 
 	[self observeKeyboard];
 	[self displayLoadingOverlay];
@@ -208,6 +226,8 @@
 }
 
 - (void)dealloc {
+	if (self.view != _godot_view) return;
+
 	self.keyboardView = nil;
 
 	self.renderer = nil;
@@ -302,6 +322,61 @@
 	if (DisplayServerIOS::get_singleton()) {
 		DisplayServerIOS::get_singleton()->virtual_keyboard_set_height(0);
 	}
+}
+
+- (void)transitionToViewController:(ViewController *)viewController {
+	viewController.view = _godot_view;
+	_godot_view.delegate = viewController;
+
+	viewController.renderer = self.renderer;;
+
+	[self.keyboardView removeFromSuperview];
+	self.keyboardView = nil;
+	self.renderer = nil;
+
+	[viewController observeKeyboard];
+}
+
+@end
+
+@implementation PortraitViewController
+
+- (BOOL)shouldAutorotate {
+	return YES;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+	if (OS_IOS::get_singleton() && DisplayServer::get_singleton()->screen_get_orientation() == DisplayServer::SCREEN_REVERSE_PORTRAIT) {
+		return UIInterfaceOrientationPortraitUpsideDown;
+	}
+    return UIInterfaceOrientationPortrait;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear: animated];
+}
+
+@end
+
+@implementation LandscapeViewController
+
+- (BOOL)shouldAutorotate {
+	return YES;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+	if (OS_IOS::get_singleton() && DisplayServer::get_singleton()->screen_get_orientation() == DisplayServer::SCREEN_REVERSE_LANDSCAPE) {
+		return UIInterfaceOrientationLandscapeRight;
+	}
+    return UIInterfaceOrientationLandscapeLeft;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear: animated];
 }
 
 @end

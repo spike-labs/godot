@@ -509,6 +509,7 @@ Error ProjectSettings::_setup(const String &p_path, const String &p_main_pack, b
 	// Attempt with a user-defined main pack first
 
 	if (!p_main_pack.is_empty()) {
+		set_setting("application/run/main_pack", p_main_pack);
 		bool ok = _load_resource_pack(p_main_pack);
 		ERR_FAIL_COND_V_MSG(!ok, ERR_CANT_OPEN, "Cannot open resource pack '" + p_main_pack + "'.");
 

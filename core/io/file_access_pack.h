@@ -117,6 +117,7 @@ public:
 	static PackedData *get_singleton() { return singleton; }
 	Error add_pack(const String &p_path, bool p_replace_files, uint64_t p_offset);
 
+	_FORCE_INLINE_ const PackedFile *try_get_packed_file(const String &p_path);
 	_FORCE_INLINE_ Ref<FileAccess> try_open_path(const String &p_path);
 	_FORCE_INLINE_ bool has_path(const String &p_path);
 
@@ -181,6 +182,17 @@ public:
 	FileAccessPack(const String &p_path, const PackedData::PackedFile &p_file);
 };
 
+const PackedData::PackedFile *PackedData::try_get_packed_file(const String &p_path) {
+	PathMD5 pmd5(p_path.md5_buffer());
+	HashMap<PathMD5, PackedFile, PathMD5>::Iterator E = files.find(pmd5);
+	if (!E) {
+		return nullptr; //not found
+	}
+	if (E->value.offset == 0) {
+		return nullptr; //was erased
+	}
+	return &E->value;
+}
 Ref<FileAccess> PackedData::try_open_path(const String &p_path) {
 	PathMD5 pmd5(p_path.md5_buffer());
 	HashMap<PathMD5, PackedFile, PathMD5>::Iterator E = files.find(pmd5);

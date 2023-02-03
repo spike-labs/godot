@@ -50,6 +50,7 @@ extern void ios_finish();
 
 @implementation AppDelegate
 
+static AppDelegate *app_delegate = nil;
 static ViewController *mainViewController = nil;
 
 + (ViewController *)viewController {
@@ -93,6 +94,8 @@ static ViewController *mainViewController = nil;
 
 	// prevent to stop music in another background app
 	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+
+	app_delegate = self;
 
 	return YES;
 }
@@ -139,6 +142,68 @@ static ViewController *mainViewController = nil;
 
 - (void)dealloc {
 	self.window = nil;
+}
+
+static ViewController *createRootViewControllerForOrientation(UIInterfaceOrientation orient) {
+	switch (orient)
+    {
+        case UIInterfaceOrientationPortrait:
+        case UIInterfaceOrientationPortraitUpsideDown: 
+			return [PortraitViewController alloc];
+        case UIInterfaceOrientationLandscapeLeft:
+        case UIInterfaceOrientationLandscapeRight:
+			return [LandscapeViewController alloc];
+        default:
+			assert(false && "bad UIInterfaceOrientation provided");
+    }
+    return nil;
+}
+
+- (void)orient_interface:(UIInterfaceOrientation)orient {
+	ViewController *vc = [createRootViewControllerForOrientation(orient) init];
+
+	self.window.hidden = YES;
+	self.window.hidden = NO;
+
+	mainViewController.view = nil;
+	self.window.rootViewController = nil;
+	
+	self.window.rootViewController = vc;
+	[mainViewController transitionToViewController:vc];
+	mainViewController = vc;
+
+	self.window.bounds = [UIScreen mainScreen].bounds;
+    // required for iOS 8, otherwise view bounds will be incorrect
+    vc.view.bounds = self.window.bounds;
+    vc.view.center = self.window.center;
+	
+	[self.window makeKeyAndVisible];
+	[self.window layoutSubviews];
+}
+
++ (void)orientInterface:(int)orientation {
+	if (app_delegate) {
+		UIInterfaceOrientation orient;
+		switch (orientation) {
+			case DisplayServer::SCREEN_SENSOR:
+			case DisplayServer::SCREEN_PORTRAIT:
+			case DisplayServer::SCREEN_SENSOR_PORTRAIT:
+				orient = UIInterfaceOrientationPortrait;
+				break;
+			case DisplayServer::SCREEN_REVERSE_PORTRAIT:
+				orient = UIInterfaceOrientationPortraitUpsideDown;
+				break;
+			case DisplayServer::SCREEN_LANDSCAPE:
+			case DisplayServer::SCREEN_SENSOR_LANDSCAPE:
+				orient = UIInterfaceOrientationLandscapeLeft;
+				break;
+			case DisplayServer::SCREEN_REVERSE_LANDSCAPE:
+				orient = UIInterfaceOrientationLandscapeRight;
+				break;
+			default: return;
+		}
+		[app_delegate orient_interface:orient];
+	}
 }
 
 @end

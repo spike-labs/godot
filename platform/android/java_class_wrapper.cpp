@@ -966,14 +966,15 @@ bool JavaClass::_convert_object_to_variant(JNIEnv *env, jobject obj, Variant &va
 }
 
 Ref<JavaClass> JavaClassWrapper::wrap(const String &p_class) {
-	if (class_cache.has(p_class)) {
-		return class_cache[p_class];
+	String class_path = p_class.replace(".", "/");
+	if (class_cache.has(class_path)) {
+		return class_cache[class_path];
 	}
 
 	JNIEnv *env = get_jni_env();
 	ERR_FAIL_NULL_V(env, Ref<JavaClass>());
 
-	jclass bclass = env->FindClass(p_class.utf8().get_data());
+	jclass bclass = env->FindClass(class_path.utf8().get_data());
 	ERR_FAIL_NULL_V(bclass, Ref<JavaClass>());
 
 	jobjectArray methods = (jobjectArray)env->CallObjectMethod(bclass, getDeclaredMethods);
@@ -981,6 +982,7 @@ Ref<JavaClass> JavaClassWrapper::wrap(const String &p_class) {
 	ERR_FAIL_NULL_V(methods, Ref<JavaClass>());
 
 	Ref<JavaClass> java_class = memnew(JavaClass);
+	java_class->_class = bclass;
 
 	int count = env->GetArrayLength(methods);
 
@@ -1146,7 +1148,7 @@ Ref<JavaClass> JavaClassWrapper::wrap(const String &p_class) {
 
 	env->DeleteLocalRef(fields);
 
-	return Ref<JavaClass>();
+	return java_class;//Ref<JavaClass>();
 }
 
 JavaClassWrapper *JavaClassWrapper::singleton = nullptr;

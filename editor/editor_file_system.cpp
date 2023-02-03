@@ -635,7 +635,9 @@ bool EditorFileSystem::_update_scan_actions() {
 				int idx = ia.dir->find_file_index(ia.file);
 				ERR_CONTINUE(idx == -1);
 				String full_path = ia.dir->get_file_path(idx);
-				if (_test_for_reimport(full_path, false)) {
+				uint64_t cache_im_time = ia.dir->files[idx]->import_modified_time;
+				uint16_t current_im_time = FileAccess::get_modified_time(full_path + ".import");
+				if (_test_for_reimport(full_path, false) || cache_im_time != current_im_time) {
 					//must reimport
 					reimports.push_back(full_path);
 					Vector<String> dependencies = _get_dependencies(full_path);
@@ -648,8 +650,8 @@ bool EditorFileSystem::_update_scan_actions() {
 					//must not reimport, all was good
 					//update modified times, to avoid reimport
 					ia.dir->files[idx]->modified_time = FileAccess::get_modified_time(full_path);
-					ia.dir->files[idx]->import_modified_time = FileAccess::get_modified_time(full_path + ".import");
 				}
+				ia.dir->files[idx]->import_modified_time = current_im_time;
 
 				fs_changed = true;
 			} break;

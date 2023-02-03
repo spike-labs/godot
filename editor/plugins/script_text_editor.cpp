@@ -699,9 +699,7 @@ static void _find_changed_scripts_for_external_editor(Node *p_base, Node *p_curr
 }
 
 void ScriptEditor::_update_modified_scripts_for_external_editor(Ref<Script> p_for_script) {
-	if (!bool(EDITOR_GET("text_editor/external/use_external_editor"))) {
-		return;
-	}
+	bool use_external_editor = bool(EditorSettings::get_singleton()->get("text_editor/external/use_external_editor"));
 
 	ERR_FAIL_COND(!get_tree());
 
@@ -721,6 +719,10 @@ void ScriptEditor::_update_modified_scripts_for_external_editor(Ref<Script> p_fo
 
 		if (scr->is_built_in()) {
 			continue; //internal script, who cares, though weird
+		}
+
+		if (!scr->get_language()->overrides_external_editor() && !use_external_editor) {
+			continue;
 		}
 
 		uint64_t last_date = scr->get_last_modified_time();

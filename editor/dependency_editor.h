@@ -95,6 +95,7 @@ public:
 class DependencyRemoveDialog : public ConfirmationDialog {
 	GDCLASS(DependencyRemoveDialog, ConfirmationDialog);
 
+protected:
 	Label *text = nullptr;
 	Tree *owners = nullptr;
 

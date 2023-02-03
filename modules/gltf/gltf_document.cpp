@@ -3198,7 +3198,15 @@ Error GLTFDocument::_parse_images(Ref<GLTFState> p_state, const String &p_base_p
 			p_state->images.push_back(Ref<Texture2D>());
 			continue;
 		}
-		p_state->images.push_back(ImageTexture::create_from_image(img));
+
+		if (p_state->textures_compression == 0) {
+			p_state->images.push_back(ImageTexture::create_from_image(img));
+		} else {
+			Ref<PortableCompressedTexture2D> tex2d;
+			tex2d.instantiate();
+			tex2d->create_from_image(img, PortableCompressedTexture2D::COMPRESSION_MODE_LOSSLESS);
+			p_state->images.push_back(tex2d);
+		}
 	}
 
 	print_verbose("glTF: Total images: " + itos(p_state->images.size()));

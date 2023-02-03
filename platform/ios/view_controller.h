@@ -39,4 +39,14 @@
 @property(nonatomic, readonly, strong) GodotView *godotView;
 @property(nonatomic, readonly, strong) GodotKeyboardInputView *keyboardView;
 
+- (void)transitionToViewController:(ViewController *)viewController;
+
+@end
+
+@interface PortraitViewController : ViewController
+
+@end
+
+@interface LandscapeViewController : ViewController
+
 @end

@@ -776,7 +776,11 @@ void TextureStorage::texture_2d_initialize(RID p_texture, const Ref<Image> &p_im
 	texture.is_render_target = false;
 	texture.rd_view = rd_view;
 	texture.is_proxy = false;
-
+#ifdef TOOLS_ENABLED
+	if (Engine::get_singleton()->is_editor_hint()) {
+		texture.image_cache_2d = p_image;
+	}
+#endif
 	texture_owner.initialize_rid(p_texture, texture);
 }
 

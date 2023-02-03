@@ -72,6 +72,7 @@ public:
 class TranslationServer : public Object {
 	GDCLASS(TranslationServer, Object);
 
+protected:
 	String locale = "en";
 	String fallback;
 
@@ -152,34 +153,34 @@ public:
 	void add_translation(const Ref<Translation> &p_translation);
 	void remove_translation(const Ref<Translation> &p_translation);
 
-	StringName translate(const StringName &p_message, const StringName &p_context = "") const;
-	StringName translate_plural(const StringName &p_message, const StringName &p_message_plural, int p_n, const StringName &p_context = "") const;
+	virtual StringName translate(const StringName &p_message, const StringName &p_context = "") const;
+	virtual StringName translate_plural(const StringName &p_message, const StringName &p_message_plural, int p_n, const StringName &p_context = "") const;
 
 	StringName pseudolocalize(const StringName &p_message) const;
 
 	bool is_pseudolocalization_enabled() const;
 	void set_pseudolocalization_enabled(bool p_enabled);
-	void set_editor_pseudolocalization(bool p_enabled);
+	virtual void set_editor_pseudolocalization(bool p_enabled);
 	void reload_pseudolocalization();
 
 	String standardize_locale(const String &p_locale) const;
 
 	int compare_locales(const String &p_locale_a, const String &p_locale_b) const;
 
-	String get_tool_locale();
+	String get_tool_locale() const;
 	void set_tool_translation(const Ref<Translation> &p_translation);
 	Ref<Translation> get_tool_translation() const;
-	StringName tool_translate(const StringName &p_message, const StringName &p_context = "") const;
-	StringName tool_translate_plural(const StringName &p_message, const StringName &p_message_plural, int p_n, const StringName &p_context = "") const;
+	virtual StringName tool_translate(const StringName &p_message, const StringName &p_context = "") const;
+	virtual StringName tool_translate_plural(const StringName &p_message, const StringName &p_message_plural, int p_n, const StringName &p_context = "") const;
 	void set_doc_translation(const Ref<Translation> &p_translation);
-	StringName doc_translate(const StringName &p_message, const StringName &p_context = "") const;
-	StringName doc_translate_plural(const StringName &p_message, const StringName &p_message_plural, int p_n, const StringName &p_context = "") const;
+	virtual StringName doc_translate(const StringName &p_message, const StringName &p_context = "") const;
+	virtual StringName doc_translate_plural(const StringName &p_message, const StringName &p_message_plural, int p_n, const StringName &p_context = "") const;
 
 	void setup();
 
 	void clear();
 
-	void load_translations();
+	virtual void load_translations();
 
 	TranslationServer();
 };

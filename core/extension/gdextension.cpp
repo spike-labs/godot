@@ -395,7 +395,50 @@ void GDExtension::_get_library_path(GDExtensionClassLibraryPtr p_library, GDExte
 }
 
 Error GDExtension::open_library(const String &p_path, const String &p_entry_symbol) {
-	Error err = OS::get_singleton()->open_dynamic_library(p_path, library, true, &library_path);
+	String lib_path = p_path;
+#ifdef IOS_ENABLED
+	// On iOS we use static linking by default.
+	String load_path = "";
+
+	// On iOS dylibs is not allowed, but can be replaced with .framework or .xcframework.
+	// If they are used, we can run dlopen on them.
+	// They should be located under Frameworks directory, so we need to replace library path.
+	if (!lib_path.ends_with(".a")) {
+		load_path = ProjectSettings::get_singleton()->globalize_path(lib_path);
+
+		if (!FileAccess::exists(load_path)) {
+			String lib_name = lib_path.get_basename().get_file();
+			String framework_path_format = "Frameworks/$name.framework/$name";
+
+			Dictionary format_dict;
+			format_dict["name"] = lib_name;
+			String framework_path = framework_path_format.format(format_dict, "$_");
+
+			load_path = OS::get_singleton()->get_executable_path().get_base_dir().path_join(framework_path);
+		}
+	}
+#elif defined(ANDROID_ENABLED)
+	String load_path = lib_path.get_file();
+#elif defined(UWP_ENABLED)
+	String load_path = lib_path.replace("res://", "");
+#elif defined(MACOS_ENABLED)
+	// On OSX the exported libraries are located under the Frameworks directory.
+	// So we need to replace the library path.
+	String load_path = ProjectSettings::get_singleton()->globalize_path(lib_path);
+	Ref<DirAccess> da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
+
+	if (!da->file_exists(load_path) && !da->dir_exists(load_path)) {
+		load_path = OS::get_singleton()->get_executable_path().get_base_dir().path_join("../Frameworks").path_join(lib_path.get_file());
+	}
+
+	if (da->dir_exists(load_path)) { // Target library is a ".framework", add library base name to the path.
+		load_path = load_path.path_join(load_path.get_file().get_basename());
+	}
+#else
+	String load_path = ProjectSettings::get_singleton()->globalize_path(lib_path);
+#endif
+
+	Error err = OS::get_singleton()->open_dynamic_library(load_path, library, true, &library_path);
 	if (err != OK) {
 		ERR_PRINT("GDExtension dynamic library not found: " + p_path);
 		return err;

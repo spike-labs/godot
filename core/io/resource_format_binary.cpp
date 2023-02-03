@@ -1118,6 +1118,8 @@ String ResourceLoaderBinary::recognize(Ref<FileAccess> p_f) {
 	return get_unicode_string();
 }
 
+ResourceFormatLoaderBinary* ResourceFormatLoaderBinary::singleton = nullptr;
+
 String ResourceLoaderBinary::recognize_script_class(Ref<FileAccess> p_f) {
 	error = OK;
 
