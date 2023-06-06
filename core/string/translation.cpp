@@ -700,7 +700,7 @@ Ref<Translation> TranslationServer::get_tool_translation() const {
 	return tool_translation;
 }
 
-String TranslationServer::get_tool_locale() {
+String TranslationServer::get_tool_locale() const {
 #ifdef TOOLS_ENABLED
 	if (Engine::get_singleton()->is_editor_hint() || Engine::get_singleton()->is_project_manager_hint()) {
 		if (TranslationServer::get_singleton()->get_tool_translation().is_valid()) {

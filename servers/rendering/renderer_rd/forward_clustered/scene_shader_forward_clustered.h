@@ -160,6 +160,11 @@ public:
 		bool uses_normal = false;
 		bool uses_particle_trails = false;
 
+		//--------------------SPIKE INSERT----------------------------
+		//Only for Spike CustomShader Beta
+		bool customcolor = false;
+		//--------------------SPIKE INSERT----------------------------
+
 		bool unshaded = false;
 		bool uses_vertex = false;
 		bool uses_position = false;

@@ -36,7 +36,7 @@
 
 class SceneState : public RefCounted {
 	GDCLASS(SceneState, RefCounted);
-
+protected:
 	Vector<StringName> names;
 	Vector<Variant> variants;
 	Vector<NodePath> node_paths;

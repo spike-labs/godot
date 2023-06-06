@@ -307,6 +307,47 @@ ProjectConverter3To4::ProjectConverter3To4(int p_maximum_file_size_kb, int p_max
 	maximum_line_length = p_maximum_line_length;
 }
 
+String ProjectConverter3To4::convert_gdscript_code(const String &p_code) {
+	RegExContainer reg_container = RegExContainer();
+
+	Vector<SourceLine> source_lines;
+
+	auto lines = p_code.split("\n");
+	for (auto line : lines) {
+		SourceLine source_line;
+		source_line.line = line;
+		source_line.is_comment = reg_container.gdscript_comment.search_all(line).size() > 0 || reg_container.csharp_comment.search_all(line).size() > 0;
+		source_lines.append(source_line);
+	}
+
+	// start convert
+	{
+		fix_tool_declaration(source_lines, reg_container);
+
+		rename_classes(source_lines, reg_container); // Using only specialized function.
+
+		rename_common(RenamesMap3To4::enum_renames, reg_container.enum_regexes, source_lines);
+		rename_colors(source_lines, reg_container); // Require to additional rename.
+
+		rename_common(RenamesMap3To4::gdscript_function_renames, reg_container.gdscript_function_regexes, source_lines);
+		rename_gdscript_functions(source_lines, reg_container, false); // Require to additional rename.
+
+		rename_common(RenamesMap3To4::project_settings_renames, reg_container.project_settings_regexes, source_lines);
+		rename_gdscript_keywords(source_lines, reg_container);
+		rename_common(RenamesMap3To4::gdscript_properties_renames, reg_container.gdscript_properties_regexes, source_lines);
+		rename_common(RenamesMap3To4::gdscript_signals_renames, reg_container.gdscript_signals_regexes, source_lines);
+		rename_common(RenamesMap3To4::shaders_renames, reg_container.shaders_regexes, source_lines);
+		rename_common(RenamesMap3To4::builtin_types_renames, reg_container.builtin_types_regexes, source_lines);
+		rename_common(RenamesMap3To4::theme_override_renames, reg_container.theme_override_regexes, source_lines);
+
+		custom_rename(source_lines, "\\.shader", ".gdshader");
+	}
+
+	auto code = collect_string_from_vector(source_lines);
+
+	return code;
+}
+
 // Function responsible for converting project.
 bool ProjectConverter3To4::convert() {
 	print_line("Starting conversion.");

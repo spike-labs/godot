@@ -1274,6 +1274,19 @@ void GDScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
 	_get_script_signal_list(r_signals, true);
 }
 
+Ref<Script> GDScript::get_script_property_type_script(const StringName &p_property) const {
+    auto E = member_indices.find(p_property);
+
+    if (E) {
+        GDScriptDataType type = E->value.data_type;
+        if (type.kind == GDScriptDataType::GDSCRIPT || type.kind == GDScriptDataType::SCRIPT) {
+            return E->value.data_type.script_type_ref;
+        }
+    }
+
+    return Ref<Script>();
+}
+
 String GDScript::_get_gdscript_reference_class_name(const GDScript *p_gdscript) {
 	ERR_FAIL_NULL_V(p_gdscript, String());
 

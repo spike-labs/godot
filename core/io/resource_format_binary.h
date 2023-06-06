@@ -119,6 +119,9 @@ public:
 	virtual ResourceUID::ID get_resource_uid(const String &p_path) const;
 	virtual void get_dependencies(const String &p_path, List<String> *p_dependencies, bool p_add_types = false);
 	virtual Error rename_dependencies(const String &p_path, const HashMap<String, String> &p_map);
+
+	static ResourceFormatLoaderBinary *singleton;
+	ResourceFormatLoaderBinary() { singleton = this; }
 };
 
 class ResourceFormatSaverBinaryInstance {

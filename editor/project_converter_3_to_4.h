@@ -123,6 +123,7 @@ class ProjectConverter3To4 {
 	bool test_conversion(RegExContainer &reg_container);
 
 public:
+	String convert_gdscript_code(const String &p_code);
 	ProjectConverter3To4(int, int);
 	bool validate_conversion();
 	bool convert();

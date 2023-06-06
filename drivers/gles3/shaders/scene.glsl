@@ -506,7 +506,7 @@ multiview_data;
 /* clang-format on */
 
 // Directional light data.
-#ifndef DISABLE_LIGHT_DIRECTIONAL
+//#ifndef DISABLE_LIGHT_DIRECTIONAL
 
 struct DirectionalLightData {
 	mediump vec3 direction;
@@ -521,7 +521,7 @@ layout(std140) uniform DirectionalLights { // ubo:7
 	DirectionalLightData directional_lights[MAX_DIRECTIONAL_LIGHT_DATA_STRUCTS];
 };
 
-#endif // !DISABLE_LIGHT_DIRECTIONAL
+//#endif // !DISABLE_LIGHT_DIRECTIONAL
 
 // Omni and spot light data.
 #if !defined(DISABLE_LIGHT_OMNI) || !defined(DISABLE_LIGHT_SPOT)
@@ -943,6 +943,15 @@ void main() {
 	mat4 inv_projection_matrix = scene_data.inv_projection_matrix;
 #endif
 	highp mat4 model_matrix = world_transform;
+
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+	//init finalcolor inout parameter & init main_light to get default light data
+	vec4 finalcolor = vec4(1.0);
+	vec3 main_light_color = directional_lights[0].color;
+	vec3 main_light = directional_lights[0].direction;
+	//--------------------SPIKE INSERT----------------------------
+
 	vec3 albedo = vec3(1.0);
 	vec3 backlight = vec3(0.0);
 	vec4 transmittance_color = vec4(0.0, 0.0, 0.0, 1.0);
@@ -1298,6 +1307,14 @@ void main() {
 	frag_color.rgb += emission + ambient_light;
 #endif
 #endif //MODE_UNSHADED
+
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+#ifdef MODE_CUSTOMCOLOR	
+	frag_color = finalcolor;
+#endif
+	//--------------------SPIKE INSERT----------------------------
+	
 	fog = vec4(unpackHalf2x16(fog_rg), unpackHalf2x16(fog_ba));
 
 #ifndef DISABLE_FOG

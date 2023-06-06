@@ -3220,6 +3220,7 @@ Error GLTFDocument::_parse_images(Ref<GLTFState> p_state, const String &p_base_p
 			p_state->source_images.push_back(Ref<Image>());
 			continue;
 		}
+
 		img->set_name(image_name);
 		if (GLTFState::GLTFHandleBinary(p_state->handle_binary_image) == GLTFState::GLTFHandleBinary::HANDLE_BINARY_DISCARD_TEXTURES) {
 			p_state->images.push_back(Ref<Texture2D>());

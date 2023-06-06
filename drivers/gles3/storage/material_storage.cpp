@@ -1658,6 +1658,13 @@ MaterialStorage::MaterialStorage() {
 		actions.renames["VIEW_RIGHT"] = "uint(1)";
 		actions.renames["EYE_OFFSET"] = "eye_offset";
 
+		//--------------------SPIKE INSERT----------------------------
+		//Only for Spike CustomShader Beta
+		actions.renames["FINALCOLOR"] = "finalcolor";
+		actions.renames["MAIN_LIGHT"] = "main_light";
+		actions.renames["MAIN_LIGHT_COLOR"] = "main_light_color";
+		//--------------------SPIKE INSERT----------------------------
+		
 		//for light
 		actions.renames["VIEW"] = "view";
 		actions.renames["LIGHT_COLOR"] = "light_color";
@@ -1735,6 +1742,12 @@ MaterialStorage::MaterialStorage() {
 		actions.render_mode_defines["shadow_to_opacity"] = "#define USE_SHADOW_TO_OPACITY\n";
 		actions.render_mode_defines["unshaded"] = "#define MODE_UNSHADED\n";
 
+		
+		//--------------------SPIKE INSERT----------------------------
+		//Only for Spike CustomShader Beta
+		actions.render_mode_defines["customcolor"] = "#define MODE_CUSTOMCOLOR\n";
+		//--------------------SPIKE INSERT----------------------------
+		
 		actions.default_filter = ShaderLanguage::FILTER_LINEAR_MIPMAP;
 		actions.default_repeat = ShaderLanguage::REPEAT_ENABLE;
 
@@ -3281,6 +3294,11 @@ void SceneShaderData::set_code(const String &p_code) {
 	uses_normal = false;
 	wireframe = false;
 
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+	customcolor = false;
+	//--------------------SPIKE INSERT----------------------------
+	
 	unshaded = false;
 	uses_vertex = false;
 	uses_position = false;
@@ -3317,6 +3335,11 @@ void SceneShaderData::set_code(const String &p_code) {
 	actions.render_mode_values["cull_front"] = Pair<int *, int>(&cull_modei, CULL_FRONT);
 	actions.render_mode_values["cull_back"] = Pair<int *, int>(&cull_modei, CULL_BACK);
 
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+	actions.render_mode_flags["customcolor"] = &customcolor;
+	//--------------------SPIKE INSERT----------------------------
+	
 	actions.render_mode_flags["unshaded"] = &unshaded;
 	actions.render_mode_flags["wireframe"] = &wireframe;
 	actions.render_mode_flags["particle_trails"] = &uses_particle_trails;

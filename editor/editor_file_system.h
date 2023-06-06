@@ -43,7 +43,8 @@ class FileAccess;
 struct EditorProgressBG;
 class EditorFileSystemDirectory : public Object {
 	GDCLASS(EditorFileSystemDirectory, Object);
-
+	
+public:
 	String name;
 	uint64_t modified_time;
 	bool verified = false; //used for checking changes
@@ -146,7 +147,7 @@ class EditorFileSystem : public Node {
 	GDCLASS(EditorFileSystem, Node);
 
 	_THREAD_SAFE_CLASS_
-
+protected:
 	struct ItemAction {
 		enum Action {
 			ACTION_NONE,
@@ -217,9 +218,9 @@ class EditorFileSystem : public Node {
 	void _save_filesystem_cache();
 	void _save_filesystem_cache(EditorFileSystemDirectory *p_dir, Ref<FileAccess> p_file);
 
-	bool _find_file(const String &p_file, EditorFileSystemDirectory **r_d, int &r_file_pos) const;
+	virtual bool _find_file(const String &p_file, EditorFileSystemDirectory **r_d, int &r_file_pos) const;
 
-	void _scan_fs_changes(EditorFileSystemDirectory *p_dir, const ScanProgress &p_progress);
+	virtual void _scan_fs_changes(EditorFileSystemDirectory *p_dir, const ScanProgress &p_progress);
 
 	void _delete_internal_files(String p_file);
 
@@ -227,7 +228,7 @@ class EditorFileSystem : public Node {
 	HashSet<String> valid_extensions;
 	HashSet<String> import_extensions;
 
-	void _scan_new_dir(EditorFileSystemDirectory *p_dir, Ref<DirAccess> &da, const ScanProgress &p_progress);
+	virtual void _scan_new_dir(EditorFileSystemDirectory *p_dir, Ref<DirAccess> &da, const ScanProgress &p_progress);
 
 	Thread thread_sources;
 	bool scanning_changes = false;

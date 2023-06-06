@@ -276,6 +276,7 @@ public:
 
 	virtual const Variant get_rpc_config() const override;
 
+	virtual Ref<Script> get_script_property_type_script(const StringName &p_property) const;
 #ifdef TOOLS_ENABLED
 	virtual bool is_placeholder_fallback_enabled() const override { return placeholder_fallback_enabled; }
 #endif

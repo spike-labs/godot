@@ -679,6 +679,15 @@ void main() {
 	vec3 eye_offset = vec3(0.0, 0.0, 0.0);
 	vec3 view = -normalize(vertex_interp);
 #endif
+
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+	//init finalcolor inout parameter & init main_light to get default light data
+	vec4 finalcolor = vec4(1.0);
+	vec3 main_light_color = directional_lights.data[0].color;
+	vec3 main_light = directional_lights.data[0].direction;
+	//--------------------SPIKE INSERT----------------------------
+
 	vec3 albedo = vec3(1.0);
 	vec3 backlight = vec3(0.0);
 	vec4 transmittance_color = vec4(0.0);
@@ -1738,6 +1747,13 @@ void main() {
 #else // MODE_UNSHADED
 	frag_color = vec4(emission + ambient_light + diffuse_light + specular_light, alpha);
 #endif // MODE_UNSHADED
+
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+#ifdef MODE_CUSTOMCOLOR	
+	frag_color = finalcolor;
+#endif
+	//--------------------SPIKE INSERT----------------------------
 
 	// Draw "fixed" fog before volumetric fog to ensure volumetric fog can appear in front of the sky.
 	frag_color.rgb = mix(frag_color.rgb, fog.rgb, fog.a);

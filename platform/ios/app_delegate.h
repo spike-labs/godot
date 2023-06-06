@@ -44,4 +44,6 @@
 @property(strong, nonatomic) UIWindow *window;
 @property(strong, class, readonly, nonatomic) ViewController *viewController;
 
++ (void)orientInterface:(int)orientation;
+
 @end

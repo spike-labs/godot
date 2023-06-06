@@ -1235,6 +1235,20 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 			plugin->_end_customize_scenes();
 		}
 	}
+
+	// Postprocess
+	for (int i = 0; i < export_plugins.size(); i++) {
+		export_plugins.write[i]->_export_files_end();
+
+		for (int j = 0; j < export_plugins[i]->extra_files.size(); j++) {
+			err = p_func(p_udata, export_plugins[i]->extra_files[j].path, export_plugins[i]->extra_files[j].data, idx, total, enc_in_filters, enc_ex_filters, key);
+			if (err != OK) {
+				return err;
+			}
+		}
+
+		export_plugins.write[i]->_clear();
+	}
 	//save config!
 
 	Vector<String> custom_list;

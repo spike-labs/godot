@@ -293,6 +293,11 @@ struct SceneShaderData : public ShaderData {
 	bool uses_particle_trails;
 	bool wireframe;
 
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+	bool customcolor = false;
+	//--------------------SPIKE INSERT----------------------------
+	
 	bool unshaded;
 	bool uses_vertex;
 	bool uses_position;

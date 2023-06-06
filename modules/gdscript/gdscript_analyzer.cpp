@@ -711,6 +711,7 @@ GDScriptParser::DataType GDScriptAnalyzer::resolve_datatype(GDScriptParser::Type
 							Ref<GDScript> gdscript = member.constant->initializer->reduced_value;
 							if (gdscript.is_valid()) {
 								Ref<GDScriptParserRef> ref = get_parser_for(gdscript->get_script_path());
+								ERR_FAIL_COND_V(ref.is_null(), bad_type);
 								if (ref->raise_status(GDScriptParserRef::INHERITANCE_SOLVED) != OK) {
 									push_error(vformat(R"(Could not parse script from "%s".)", gdscript->get_script_path()), p_type);
 									return bad_type;

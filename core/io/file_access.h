@@ -44,6 +44,7 @@
 
 class FileAccess : public RefCounted {
 	GDCLASS(FileAccess, RefCounted);
+	friend class FileSystemServer;
 
 public:
 	enum AccessType {

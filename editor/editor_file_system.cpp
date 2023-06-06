@@ -635,7 +635,9 @@ bool EditorFileSystem::_update_scan_actions() {
 				int idx = ia.dir->find_file_index(ia.file);
 				ERR_CONTINUE(idx == -1);
 				String full_path = ia.dir->get_file_path(idx);
-				if (_test_for_reimport(full_path, false)) {
+				uint64_t cache_im_time = ia.dir->files[idx]->import_modified_time;
+				uint16_t current_im_time = FileAccess::get_modified_time(full_path + ".import");
+				if (_test_for_reimport(full_path, false) || cache_im_time != current_im_time) {
 					//must reimport
 					reimports.push_back(full_path);
 					Vector<String> dependencies = _get_dependencies(full_path);
@@ -648,8 +650,8 @@ bool EditorFileSystem::_update_scan_actions() {
 					//must not reimport, all was good
 					//update modified times, to avoid reimport
 					ia.dir->files[idx]->modified_time = FileAccess::get_modified_time(full_path);
-					ia.dir->files[idx]->import_modified_time = FileAccess::get_modified_time(full_path + ".import");
 				}
+				ia.dir->files[idx]->import_modified_time = current_im_time;
 
 				fs_changed = true;
 			} break;
@@ -1377,26 +1379,8 @@ bool EditorFileSystem::_find_file(const String &p_file, EditorFileSystemDirector
 		}
 
 		if (idx == -1) {
-			//does not exist, create i guess?
-			EditorFileSystemDirectory *efsd = memnew(EditorFileSystemDirectory);
-
-			efsd->name = path[i];
-			efsd->parent = fs;
-
-			int idx2 = 0;
-			for (int j = 0; j < fs->get_subdir_count(); j++) {
-				if (efsd->name.naturalnocasecmp_to(fs->get_subdir(j)->get_name()) < 0) {
-					break;
-				}
-				idx2++;
-			}
-
-			if (idx2 == fs->get_subdir_count()) {
-				fs->subdirs.push_back(efsd);
-			} else {
-				fs->subdirs.insert(idx2, efsd);
-			}
-			fs = efsd;
+			//folder does not exist
+			return false;
 		} else {
 			fs = fs->get_subdir(idx);
 		}

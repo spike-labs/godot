@@ -95,6 +95,7 @@ typedef Error (*ResourceLoaderImport)(const String &p_path);
 typedef void (*ResourceLoadedCallback)(Ref<Resource> p_resource, const String &p_path);
 
 class ResourceLoader {
+	friend class FileSystemServer;
 	enum {
 		MAX_LOADERS = 64
 	};

@@ -50,9 +50,13 @@ const GodotFetch = {
 				return;
 			}
 			let chunked = false;
+			let bodySize = -1;
 			response.headers.forEach(function (value, header) {
 				const v = value.toLowerCase().trim();
 				const h = header.toLowerCase().trim();
+				if (h === "content-length") {
+					bodySize = v;
+				}
 				if (h === 'transfer-encoding' && v === 'chunked') {
 					chunked = true;
 				}
@@ -61,6 +65,7 @@ const GodotFetch = {
 			obj.response = response;
 			obj.reader = response.body.getReader();
 			obj.chunked = chunked;
+			obj.bodySize = bodySize;
 		},
 
 		onerror: function (id, err) {

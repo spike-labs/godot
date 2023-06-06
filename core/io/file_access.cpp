@@ -38,6 +38,8 @@
 #include "core/io/marshalls.h"
 #include "core/os/os.h"
 
+#include "modules/file_access/spike_file_access.h"
+
 FileAccess::CreateFunc FileAccess::create_func[ACCESS_MAX] = { nullptr, nullptr };
 
 FileAccess::FileCloseFailNotify FileAccess::close_fail_notify = nullptr;
@@ -91,6 +93,17 @@ Ref<FileAccess> FileAccess::open(const String &p_path, int p_mode_flags, Error *
 	//try packed data first
 
 	Ref<FileAccess> ret;
+
+	//try virtual file
+	if(FileAccessVirtual::has_virual_file(p_path)) {
+		Ref<FileAccessVirtual> fav;
+		fav.instantiate();
+		if(fav->open_internal(p_path , p_mode_flags) == OK) {
+			ret = fav;
+			return ret;
+		}
+	}
+
 	if (!(p_mode_flags & WRITE) && PackedData::get_singleton() && !PackedData::get_singleton()->is_disabled()) {
 		ret = PackedData::get_singleton()->try_open_path(p_path);
 		if (ret.is_valid()) {

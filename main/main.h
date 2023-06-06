@@ -91,4 +91,18 @@ public:
 		return return_code;                                        \
 	}
 
+// Replace `memnew` with `objnew` for engine development.
+#include "core/object/object.h"
+extern Object *create_godot_object(const void *p_class);
+
+template <class T>
+static T *create_godot_object() {
+	T *object = Object::cast_to<T>(create_godot_object(T::get_class_ptr_static()));
+	if (object == nullptr)
+		object = memnew(T);
+	return object;
+}
+
+#define objnew(m_class) create_godot_object<m_class>()
+
 #endif // MAIN_H

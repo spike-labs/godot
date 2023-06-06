@@ -69,6 +69,10 @@ void SceneShaderForwardMobile::ShaderData::set_code(const String &p_code) {
 	uses_normal = false;
 	bool wireframe = false;
 
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+	customcolor = false;
+	//--------------------SPIKE INSERT----------------------------
 	unshaded = false;
 	uses_vertex = false;
 	uses_sss = false;
@@ -102,6 +106,11 @@ void SceneShaderForwardMobile::ShaderData::set_code(const String &p_code) {
 	actions.render_mode_values["cull_disabled"] = Pair<int *, int>(&cull, CULL_DISABLED);
 	actions.render_mode_values["cull_front"] = Pair<int *, int>(&cull, CULL_FRONT);
 	actions.render_mode_values["cull_back"] = Pair<int *, int>(&cull, CULL_BACK);
+
+	//--------------------SPIKE INSERT----------------------------
+	//Only for Spike CustomShader Beta
+	actions.render_mode_flags["customcolor"] = &customcolor;
+	//--------------------SPIKE INSERT----------------------------
 
 	actions.render_mode_flags["unshaded"] = &unshaded;
 	actions.render_mode_flags["wireframe"] = &wireframe;
@@ -529,6 +538,13 @@ void SceneShaderForwardMobile::init(const String p_defines) {
 		actions.renames["VIEW_RIGHT"] = "1";
 		actions.renames["EYE_OFFSET"] = "eye_offset";
 
+		//--------------------SPIKE INSERT----------------------------
+		//Only for Spike CustomShader Beta
+		actions.renames["FINALCOLOR"] = "finalcolor";
+		actions.renames["MAIN_LIGHT"] = "main_light";
+		actions.renames["MAIN_LIGHT_COLOR"] = "main_light_color";
+		//--------------------SPIKE INSERT----------------------------
+		
 		//for light
 		actions.renames["VIEW"] = "view";
 		actions.renames["LIGHT_COLOR"] = "light_color";
@@ -607,6 +623,11 @@ void SceneShaderForwardMobile::init(const String p_defines) {
 		actions.render_mode_defines["ambient_light_disabled"] = "#define AMBIENT_LIGHT_DISABLED\n";
 		actions.render_mode_defines["shadow_to_opacity"] = "#define USE_SHADOW_TO_OPACITY\n";
 		actions.render_mode_defines["unshaded"] = "#define MODE_UNSHADED\n";
+
+		//--------------------SPIKE INSERT----------------------------
+		//Only for Spike CustomShader Beta
+		actions.render_mode_defines["customcolor"] = "#define MODE_CUSTOMCOLOR\n";
+		//--------------------SPIKE INSERT----------------------------
 
 		actions.sampler_array_name = "material_samplers";
 		actions.base_texture_binding_index = 1;

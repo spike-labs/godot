@@ -370,7 +370,9 @@ void PortableCompressedTexture2D::_set_data(const Vector<uint8_t> &p_data) {
 				data += 4;
 				data_size -= 4;
 				ERR_FAIL_COND(mipsize < data_size);
-				Ref<Image> img = memnew(Image(data, data_size));
+				ERR_FAIL_COND(Image::_webp_mem_loader_func == nullptr);
+				Ref<Image> img = Image::_webp_mem_loader_func(data, data_size);
+				//Ref<Image> img = memnew(Image(data, data_size));
 				ERR_FAIL_COND(img->is_empty());
 				if (img->get_format() != format) { // May happen due to webp/png in the tiny mipmaps.
 					img->convert(format);
@@ -405,7 +407,9 @@ void PortableCompressedTexture2D::_set_data(const Vector<uint8_t> &p_data) {
 	}
 
 	image_stored = true;
-	RenderingServer::get_singleton()->texture_set_size_override(texture, size_override.width, size_override.height);
+	if (size_override.width > 0 && size_override.height > 0) {
+		RenderingServer::get_singleton()->texture_set_size_override(texture, size_override.width, size_override.height);
+	}
 	alpha_cache.unref();
 
 	if (keep_all_compressed_buffers || keep_compressed_buffer) {
